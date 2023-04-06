@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model boletos {
+  id             Int      @id @default(autoincrement())
+  price          Int
+  createdAt      DateTime @default(now()) @db.Timestamp(6)
+  expirationDate DateTime @db.Date
+  user_id        Int
+  owner_id       Int
+  emittedAt      DateTime @default(now()) @db.Timestamp(6)
+  barcode        Int
+  qrcode         Bytes
+  owner          owner    @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users          users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model owner {
+  id           Int       @id @default(autoincrement())
+  name         String
+  cnpj         Int
+  street       String
+  number       Int
+  city         String
+  state        String
+  neighborhood String
+  cep          Int
+  bank_info    String
+  createdAt    DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime  @default(now()) @db.Timestamp(6)
+  boletos      boletos[]
+}
+
+model users {
+  id           Int       @id @default(autoincrement())
+  name         String
+  cpf          Int
+  street       String
+  number       Int
+  neighborhood String
+  city         String
+  state        String
+  cep          Int
+  createdAt    DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime  @default(now()) @db.Timestamp(6)
+  boletos      boletos[]
+}
